@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kindy Town: Misi Kenderaan | Kinder Klub</title>
+
+  <!-- Tailwind CSS & Google Fonts Fredoka & Quicksand -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --font-family: 'Fredoka', 'Quicksand', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      font-family: var(--font-family);
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background-color: #f0fdf4;
+    }
+
+    /* Latar Belakang Rasmi Town untuk Front Page */
+    .bg-kindy-front {
+      background-color: #0f172a;
+      position: relative;
+    }
+
+    /* Efek Butang 3D Permainan Kanak-Kanak */
+    .btn-3d-green {
+      background: linear-gradient(180deg, #34d399 0%, #10b981 60%, #059669 100%);
+      box-shadow: 0 6px 0 #047857, 0 12px 20px rgba(5, 150, 105, 0.35);
+      transition: all 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .btn-3d-green:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #047857, 0 6px 10px rgba(5, 150, 105, 0.25);
+    }
+
+    .btn-3d-purple {
+      background: linear-gradient(180deg, #c084fc 0%, #a855f7 60%, #9333ea 100%);
+      box-shadow: 0 5px 0 #7e22ce, 0 10px 18px rgba(147, 51, 234, 0.32);
+      transition: all 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .btn-3d-purple:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #7e22ce, 0 4px 10px rgba(147, 51, 234, 0.22);
+    }
+
+    .btn-3d-amber {
+      background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 60%, #d97706 100%);
+      box-shadow: 0 5px 0 #b45309, 0 10px 18px rgba(217, 119, 6, 0.3);
+      transition: all 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .btn-3d-amber:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #b45309, 0 4px 10px rgba(217, 119, 6, 0.2);
+    }
+
+    .btn-pill-choice {
+      transition: all 0.15s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08);
+    }
+    .btn-pill-choice:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    /* Animasi Awan & Hiasan Latar */
+    @keyframes floatCloudSlow {
+      0% { transform: translateX(-10%); }
+      50% { transform: translateX(10%); }
+      100% { transform: translateX(-10%); }
+    }
+    .animate-cloud-slow {
+      animation: floatCloudSlow 18s ease-in-out infinite;
+    }
+
+    @keyframes floatMascot {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-7px) rotate(1.5deg); }
+    }
+    .animate-mascot {
+      animation: floatMascot 3.2s ease-in-out infinite;
+    }
+
+    @keyframes popPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .animate-pop-pulse {
+      animation: popPulse 2.4s ease-in-out infinite;
+    }
+
+    /* Efek Kaca Glass-HUD */
+    .glass-hud {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 2px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.14);
+    }
+
+    /* Getaran Enjin Kenderaan Semasa Bergerak */
+    @keyframes engineVibrate {
+      0% { transform: translateY(0px) rotate(0deg); }
+      25% { transform: translateY(-2px) rotate(-1.5deg); }
+      50% { transform: translateY(0px) rotate(1deg); }
+      75% { transform: translateY(-1.5px) rotate(-0.8deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+    .vibrating {
+      animation: engineVibrate 0.15s linear infinite !important;
+    }
+
+    /* Viewport & Peta 2.5D */
+    #game-viewport {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      touch-action: none;
+      cursor: grab;
+      display: none;
+      background: #78c850;
+    }
+    #game-viewport:active {
+      cursor: grabbing;
+    }
+
+    #game-map {
+      width: 2200px;
+      height: 1350px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: 0 0;
+      will-change: transform;
+      background-color: #82d159;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.12) 0%, transparent 60%),
+        repeating-linear-gradient(45deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 24px, transparent 24px, transparent 48px);
+    }
+
+    .road-surface {
+      background-color: #334155;
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.45), 0 8px 16px rgba(0,0,0,0.15);
+    }
+    .road-marking {
+      background-image: repeating-linear-gradient(90deg, #facc15 0, #facc15 24px, transparent 24px, transparent 48px);
+    }
+    .road-marking-v {
+      background-image: repeating-linear-gradient(180deg, #facc15 0, #facc15 24px, transparent 24px, transparent 48px);
+    }
+    .crosswalk {
+      background-image: repeating-linear-gradient(90deg, #ffffff 0, #ffffff 12px, transparent 12px, transparent 24px);
+    }
+
+    .vehicle-actor {
+      position: absolute;
+      z-index: 45;
+      transform-origin: center center;
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,0.35));
+      will-change: left, top, transform;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Footer Rasmi */
+    .kindy-footer {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 11px;
+      color: #be185d;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+  </style>
+</head>
+
+<body class="w-screen h-screen overflow-hidden select-none bg-[#f0fdf4] text-slate-800">
+
+  <!-- ============================================== -->
+  <!-- 1. FRONT PAGE (LAMAN UTAMA KINDY KLUB)          -->
+  <!-- ============================================== -->
+  <section id="front-page" class="w-full h-full flex flex-col justify-between items-center bg-kindy-front p-3 sm:p-5 relative z-50 overflow-y-auto no-scrollbar">
+    
+    <!-- Latar Belakang Gambar Rasmi Town (16:9 Landscape & 9:16 Portrait) -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+      <picture class="w-full h-full">
+        <!-- Paparan Skrin Tegak / Telefon (9:16 Portrait) -->
+        <source media="(orientation: portrait)" srcset="https://imglink.cc/cdn/FItMxpXWEc.jpeg">
+        <!-- Paparan Skrin Lebar / Komputer / Tablet (16:9 Landscape) -->
+        <img src="https://imglink.cc/cdn/T3pW9BE60L.jpeg" alt="Main Mission Town Background" class="w-full h-full object-cover">
+      </picture>
+      
+      <!-- Lapisan Penapis Pencahayaan Lembut & Tint bagi menjamin kejelasan UI & teks -->
+      <div class="absolute inset-0 bg-gradient-to-b from-sky-900/30 via-slate-900/10 to-emerald-950/40 backdrop-blur-[1px]"></div>
+      
+      <!-- Cahaya & Awan Halus Tambahan -->
+      <div class="absolute -top-12 -left-12 w-64 h-64 bg-amber-300/25 rounded-full blur-3xl animate-cloud-slow"></div>
+      <div class="absolute bottom-10 left-10 w-72 h-72 bg-emerald-300/25 rounded-full blur-3xl animate-cloud-slow" style="animation-delay: -9s;"></div>
+    </div>
+
+    <!-- Header Atas: Bintang, Suis Audio, dan Pilihan Bahasa Jelas -->
+    <header class="w-full max-w-xl flex items-center justify-between pt-1 pb-2 z-10">
+      
+      <!-- Kiri: Butang Koleksi Ungu -->
+      <button onclick="window.kindyApp ? window.kindyApp.openCollectionModal() : null" class="px-3.5 py-2 rounded-2xl bg-purple-500 hover:bg-purple-600 text-white font-black text-xs sm:text-sm flex items-center gap-1.5 shadow-md btn-pill-choice cursor-pointer">
+        <span>⚏</span>
+        <span data-i18n="pillCollection">Koleksi</span>
+      </button>
+
+      <!-- Tengah: Skor Bintang ⭐ -->
+      <div class="px-4 py-1.5 rounded-full bg-amber-400 text-amber-950 font-black text-xs sm:text-sm flex items-center gap-1.5 shadow-md border-2 border-amber-300">
+        <span class="text-base leading-none">⭐</span>
+        <span id="front-star-count">0</span>
+      </div>
+
+      <!-- Kanan: Audio & Suis Bahasa BM / EN Berasingan Jelas -->
+      <div class="flex items-center gap-1.5">
+        <!-- Audio -->
+        <button onclick="window.kindyApp ? window.kindyApp.toggleSound() : null" id="btn-sound-toggle" type="button" title="Bunyi" class="w-9 h-9 rounded-2xl bg-white border-2 border-slate-200 text-slate-700 font-bold flex items-center justify-center text-sm shadow-sm btn-pill-choice cursor-pointer">
+          <span id="sound-indicator">🔊</span>
+        </button>
+
+        <!-- Segmented Control Bahasa yang Jelas & Terang -->
+        <div class="flex items-center bg-white p-1 rounded-2xl border-2 border-emerald-400 shadow-sm">
+          <button id="lang-btn-bm" onclick="window.kindyApp ? window.kindyApp.setLanguage('BM') : null" type="button" class="px-3 py-1 rounded-xl text-xs font-black transition-all bg-emerald-500 text-white shadow-sm cursor-pointer">
+            🇲🇾 BM
+          </button>
+          <button id="lang-btn-en" onclick="window.kindyApp ? window.kindyApp.setLanguage('EN') : null" type="button" class="px-3 py-1 rounded-xl text-xs font-black transition-all text-slate-600 hover:text-emerald-700 cursor-pointer">
+            🇬🇧 EN
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Kad Utama Laman Depan (#main-card) yang Lebih Segar & Kemas -->
+    <main class="w-full max-w-md my-auto flex flex-col items-center z-10">
+      <div id="main-card" class="w-full bg-white/95 rounded-[36px] border-[5px] border-[#10b981] p-5 sm:p-7 shadow-2xl relative flex flex-col items-center text-center">
+        
+        <!-- Maskot Otter 3D dengan Bingkai Emas & Bayangan Menawan -->
+        <div class="relative -mt-16 mb-2">
+          <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-tr from-amber-300 via-yellow-200 to-amber-100 border-[5px] border-amber-400 shadow-2xl flex items-center justify-center p-2.5 animate-mascot cursor-pointer overflow-hidden" onclick="window.kindyApp ? window.kindyApp.playOtter() : null">
+            <img id="mascot-img" src="https://imglink.cc/cdn/ksYVKTgSXJ.png" alt="Baby Otter Mission Explorer" class="w-full h-full object-contain filter drop-shadow" onerror="ui.handleImgFallback(this, 'mascot')">
+          </div>
+          <!-- Lencana Comel Maskot -->
+          <div class="absolute -bottom-2 -right-1 bg-emerald-500 text-white text-[11px] font-black px-2.5 py-0.5 rounded-full shadow border-2 border-white animate-bounce">
+            Kindy Explorer ✨
+          </div>
+        </div>
+
+        <!-- Tajuk & Subtajuk Misi -->
+        <h1 data-i18n="gameTitle" class="text-3xl sm:text-4xl font-black text-slate-800 tracking-tight leading-none mb-1">
+          Kindy Town
+        </h1>
+        <div data-i18n="gameSubtitle" class="text-xs sm:text-sm font-bold text-emerald-600 mb-4 uppercase tracking-wider">
+          Misi Kenderaan & Kembara Bandar
+        </div>
+
+        <!-- Pilihan Tahap Umur Berbutang Badge Cantik -->
+        <div class="w-full bg-emerald-50/90 border-2 border-emerald-200 rounded-2xl p-3 mb-4 flex flex-col gap-1.5 text-left">
+          <div class="flex items-center justify-between">
+            <span data-i18n="ageLevelLabel" class="text-[11px] font-black uppercase text-emerald-800 tracking-wider">Pilih Tahap Umur:</span>
+            <span id="active-age-badge" class="text-[10px] font-extrabold bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full">Tahap 1 Aktif</span>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 mt-1">
+            <!-- Pilihan Tahap 1 -->
+            <button id="level-btn-1" onclick="window.kindyApp ? window.kindyApp.selectAgeLevel(1) : null" type="button" class="p-2 sm:p-2.5 rounded-xl border-2 border-emerald-500 bg-white text-emerald-900 flex flex-col items-center justify-center transition-all shadow-md cursor-pointer">
+              <span class="text-xs font-black flex items-center gap-1">🐣 <span data-i18n="level1Title">Tahap 1</span></span>
+              <span class="text-[10px] font-bold text-emerald-600" data-i18n="level1Age">3-4 Tahun</span>
+            </button>
+
+            <!-- Pilihan Tahap 2 -->
+            <button id="level-btn-2" onclick="window.kindyApp ? window.kindyApp.selectAgeLevel(2) : null" type="button" class="p-2 sm:p-2.5 rounded-xl border-2 border-slate-200 bg-white/70 text-slate-500 hover:border-emerald-300 flex flex-col items-center justify-center transition-all shadow-sm cursor-pointer">
+              <span class="text-xs font-black flex items-center gap-1">🦁 <span data-i18n="level2Title">Tahap 2</span></span>
+              <span class="text-[10px] font-bold text-slate-400" data-i18n="level2Age">5-6 Tahun</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Butang Hijau Gergasi 3D: ▶ MULA MENYUSUN! -->
+        <button onclick="window.kindyApp ? window.kindyApp.startGame() : null" type="button" class="w-full py-4 px-6 rounded-2xl text-white font-black text-lg tracking-wide uppercase btn-3d-green mb-3 flex items-center justify-center gap-2 cursor-pointer">
+          <span class="text-xl">▶</span>
+          <span data-i18n="btnStart">MULA MENYUSUN!</span>
+        </button>
+
+        <!-- Butang Ungu 3D: ⚏ LIHAT SEMUA KOLEKSI -->
+        <button onclick="window.kindyApp ? window.kindyApp.openCollectionModal() : null" type="button" class="w-full py-3 px-5 rounded-2xl text-white font-black text-xs sm:text-sm tracking-wide uppercase btn-3d-purple mb-3 flex items-center justify-center gap-2 cursor-pointer">
+          <span>⚏</span>
+          <span data-i18n="btnCollection">LIHAT SEMUA KOLEKSI (36)</span>
+        </button>
+
+        <!-- Footer Rekod Skor Bintang -->
+        <div class="w-full pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-600">
+          <span data-i18n="recordScoreLabel" class="flex items-center gap-1">🏆 Rekod Tertinggi:</span>
+          <span class="text-amber-500 font-black text-sm flex items-center gap-1">
+            <span id="front-high-score">0</span> ⭐
+          </span>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer Standard Kindy Klub -->
+    <footer class="w-full text-center py-1 z-10">
+      <p class="kindy-footer">Made by Kindy Klub | © All Rights Reserved</p>
+    </footer>
+
+  </section>
+
+  <!-- ============================================== -->
+  <!-- 2. GAME VIEWPORT & 2.5D ISOMETRIC TOWN MAP     -->
+  <!-- ============================================== -->
+  <div id="game-viewport">
+    
+    <!-- Floating HUD di Atas Permainan -->
+    <header class="absolute top-0 left-0 right-0 z-[100] p-3 flex items-start justify-between pointer-events-none">
+      
+      <!-- Kiri: Butang Balik, Avatar Maskot & Fokus Semula -->
+      <div class="flex items-center gap-2 pointer-events-auto">
+        <button onclick="kindyApp.returnToFrontPage()" class="glass-hud w-10 h-10 rounded-2xl text-slate-700 hover:text-emerald-600 font-black flex items-center justify-center text-lg shadow" title="Kembali">
+          ‹
+        </button>
+
+        <div class="glass-hud rounded-2xl px-3 py-1.5 flex items-center gap-2.5 shadow-lg cursor-pointer" onclick="sound.playOtter()">
+          <img src="https://imglink.cc/cdn/ksYVKTgSXJ.png" alt="Baby Otter" class="w-8 h-8 object-contain animate-mascot" onerror="ui.handleImgFallback(this, 'mascot')">
+          <div>
+            <h2 class="text-xs sm:text-sm font-black text-slate-800 leading-tight">Kindy Town</h2>
+            <p id="hud-subtext" class="text-[10px] font-bold text-emerald-600" data-i18n="hudSubtext">Pilih kenderaan & mulakan misi!</p>
+          </div>
+        </div>
+
+        <button onclick="game.recenterCameraToVehicle()" title="Fokus Kamera" class="glass-hud w-10 h-10 rounded-2xl text-emerald-600 hover:text-emerald-700 flex items-center justify-center shadow">
+          🎯
+        </button>
+      </div>
+
+      <!-- Kanan: Bintang ⭐, Suis Bahasa Cepat, Butang Bunyi -->
+      <div class="flex items-center gap-2 pointer-events-auto">
+        <div class="glass-hud px-3 py-1.5 rounded-2xl flex items-center gap-1.5 border border-amber-300 shadow">
+          <span class="text-amber-500 text-sm">⭐</span>
+          <span id="game-star-count" class="text-xs sm:text-sm font-black text-amber-950">0</span>
+        </div>
+
+        <button onclick="window.kindyApp ? window.kindyApp.toggleLanguage() : null" type="button" class="glass-hud px-2.5 py-1.5 rounded-2xl font-black text-xs text-emerald-800 shadow cursor-pointer">
+          <span id="game-lang-label">🇲🇾 BM</span>
+        </button>
+
+        <button onclick="window.kindyApp ? window.kindyApp.toggleSound() : null" type="button" class="glass-hud w-9 h-9 rounded-2xl text-slate-700 flex items-center justify-center shadow cursor-pointer">
+          <span id="game-sound-indicator" class="text-sm">🔊</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Banner Perjalanan Status Menuju Lokasi Misi -->
+    <div id="mission-status-pill" class="absolute top-16 left-1/2 -translate-x-1/2 z-[100] hidden pointer-events-none transition-all duration-300">
+      <div class="glass-hud px-5 py-2.5 rounded-full flex items-center gap-3 border-2 border-emerald-400 shadow-2xl animate-pop-pulse">
+        <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+        <span id="mission-status-text" class="text-xs sm:text-sm font-black text-slate-800" data-i18n="travelling">Menuju ke lokasi misi...</span>
+      </div>
+    </div>
+
+    <!-- PETA BESAR 2.5D (2200px x 1350px) -->
+    <div id="game-map">
+      
+      <!-- Horizon Strip di Bahagian Atas -->
+      <div class="absolute top-0 left-0 w-full h-[180px] bg-gradient-to-b from-sky-400 via-sky-300 to-emerald-400 overflow-hidden border-b-4 border-emerald-600/40">
+        <img src="https://imglink.cc/cdn/T3pW9BE60L.jpeg" alt="Town Horizon" class="w-full h-full object-cover opacity-85 mix-blend-overlay" onerror="this.style.display='none'">
+        <div class="absolute bottom-0 left-0 w-full h-10 bg-sky-500/70 border-t-2 border-sky-300">
+          <div class="w-full h-full opacity-30 bg-[radial-gradient(circle,#fff_10%,transparent_20%)] bg-[length:24px_24px]"></div>
+        </div>
+      </div>
+
+      <!-- Jalan Melintang 1 (Utara): Y = 360 -->
+      <div class="absolute left-0 top-[360px] w-full h-[110px] road-surface z-10">
+        <div class="absolute top-[52px] left-0 w-full h-[6px] road-marking"></div>
+      </div>
+
+      <!-- Jalan Melintang 2 (Pusat Hub): Y = 680 -->
+      <div class="absolute left-0 top-[680px] w-full h-[120px] road-surface z-10">
+        <div class="absolute top-[57px] left-0 w-full h-[6px] road-marking"></div>
+      </div>
+
+      <!-- Jalan Melintang 3 (Selatan): Y = 1040 -->
+      <div class="absolute left-0 top-[1040px] w-full h-[110px] road-surface z-10">
+        <div class="absolute top-[52px] left-0 w-full h-[6px] road-marking"></div>
+      </div>
+
+      <!-- Jalan Menegak 1 (Barat): X = 320 -->
+      <div class="absolute top-[180px] left-[320px] w-[110px] h-[1170px] road-surface z-10">
+        <div class="absolute left-[52px] top-0 w-[6px] h-full road-marking-v"></div>
+      </div>
+
+      <!-- Jalan Menegak 2 (Tengah): X = 1050 -->
+      <div class="absolute top-[180px] left-[1050px] w-[120px] h-[1170px] road-surface z-10">
+        <div class="absolute left-[57px] top-0 w-[6px] h-full road-marking-v"></div>
+      </div>
+
+      <!-- Jalan Menegak 3 (Timur): X = 1720 -->
+      <div class="absolute top-[180px] left-[1720px] w-[110px] h-[1170px] road-surface z-10">
+        <div class="absolute left-[52px] top-0 w-[6px] h-full road-marking-v"></div>
+      </div>
+
+      <!-- Lintasan Pejalan Kaki (Zebra Crossings) -->
+      <div class="absolute left-[320px] top-[330px] w-[110px] h-[30px] crosswalk z-15"></div>
+      <div class="absolute left-[1050px] top-[650px] w-[120px] h-[30px] crosswalk z-15"></div>
+      <div class="absolute left-[1720px] top-[650px] w-[110px] h-[30px] crosswalk z-15"></div>
+      <div class="absolute left-[1050px] top-[1010px] w-[120px] h-[30px] crosswalk z-15"></div>
+
+      <!-- Taman Bulatan Pusat Dataran Kindy -->
+      <div class="absolute left-[970px] top-[600px] w-[280px] h-[280px] rounded-full bg-emerald-600 border-8 border-slate-700 shadow-2xl flex items-center justify-center z-15">
+        <div class="w-[180px] h-[180px] rounded-full bg-sky-100 border-4 border-amber-300 flex flex-col items-center justify-center shadow-inner text-center p-2">
+          <span class="text-3xl">⛲</span>
+          <span class="text-xs font-black text-sky-900 tracking-wider">DATARAN KINDY</span>
+        </div>
+      </div>
+
+      <!-- 7 BANGUNAN & LOKASI MISI RASMI -->
+      <!-- 1. Balai Bomba -->
+      <div id="loc-balai_bomba" onclick="game.onLandmarkClicked('balai_bomba')" class="absolute left-[100px] top-[220px] w-[200px] h-[160px] cursor-pointer z-20 group">
+        <div class="w-full h-full bg-white/95 rounded-3xl p-3 shadow-2xl border-4 border-rose-500 flex flex-col items-center justify-between transition-transform duration-200 group-hover:scale-105">
+          <img src="https://imglink.cc/cdn/Lf55L8MnPl.png" alt="Balai Bomba" class="w-24 h-24 object-contain filter drop-shadow" onerror="ui.handleImgFallback(this, 'fireStation')">
+          <div class="bg-rose-500 text-white font-black text-xs px-3 py-1 rounded-full shadow" data-i18n="locFireStation">Balai Bomba</div>
+        </div>
+        <div class="absolute -top-3 -right-2 bg-amber-400 text-rose-950 text-[10px] font-black px-2 py-0.5 rounded-full border border-white shadow animate-bounce" data-i18n="badgeFire">Misi Api! 🔥</div>
+      </div>
+
+      <!-- 2. Hospital -->
+      <div id="loc-hospital" onclick="game.onLandmarkClicked('hospital')" class="absolute left-[1860px] top-[220px] w-[210px] h-[160px] cursor-pointer z-20 group">
+        <div class="w-full h-full bg-white/95 rounded-3xl p-3 shadow-2xl border-4 border-blue-500 flex flex-col items-center justify-between transition-transform duration-200 group-hover:scale-105">
+          <img src="https://imglink.cc/cdn/4d0SCWSZqJ.png" alt="Hospital" class="w-24 h-24 object-contain filter drop-shadow" onerror="ui.handleImgFallback(this, 'hospital')">
+          <div class="bg-blue-600 text-white font-black text-xs px-3 py-1 rounded-full shadow" data-i18n="locHospital">Hospital Kindy</div>
+        </div>
+        <div class="absolute -top-3 -right-2 bg-emerald-400 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-full border border-white shadow" data-i18n="badgeEmergency">Kecemasan 🩺</div>
+      </div>
+
+      <!-- 3. Tapak Pembinaan -->
+      <div id="loc-tapak_binaan" onclick="game.onLandmarkClicked('tapak_binaan')" class="absolute left-[1200px] top-[220px] w-[220px] h-[160px] cursor-pointer z-20 group">
+        <div class="w-full h-full bg-amber-50/95 rounded-3xl p-3 shadow-2xl border-4 border-amber-500 flex flex-col items-center justify-between transition-transform duration-200 group-hover:scale-105">
+          <img src="https://imglink.cc/cdn/COUIBRDvSu.png" alt="Tapak Pembinaan" class="w-24 h-24 object-contain filter drop-shadow" onerror="ui.handleImgFallback(this, 'construction')">
+          <div class="bg-amber-500 text-white font-black text-xs px-3 py-1 rounded-full shadow" data-i18n="locConstruction">Tapak Binaan</div>
+        </div>
+        <div class="absolute -top-3 -right-2 bg-yellow-400 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-full border border-white shadow" data-i18n="badgeCrane">Angkat Kren 🏗️</div>
+      </div>
+
+      <!-- 4. Pusat Sampah -->
+      <div id="loc-pusat_sampah" onclick="game.onLandmarkClicked('pusat_sampah')" class="absolute left-[1860px] top-[920px] w-[210px] h-[160px] cursor-pointer z-20 group">
+        <div class="w-full h-full bg-emerald-50/95 rounded-3xl p-3 shadow-2xl border-4 border-emerald-600 flex flex-col items-center justify-between transition-transform duration-200 group-hover:scale-105">
+          <img src="https://imglink.cc/cdn/h9bR-ygNF-.png" alt="Pusat Sampah" class="w-24 h-24 object-contain filter drop-shadow" onerror="ui.handleImgFallback(this, 'garbage')">
+          <div class="bg-emerald-600 text-white font-black text-xs px-3 py-1 rounded-full shadow" data-i18n="locRecycle">Kutipan Sampah</div>
+        </div>
+        <div class="absolute -top-3 -right-2 bg-lime-400 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-full border border-white shadow" data-i18n="badgeBin">Tong Kitar ♻️</div>
+      </div>
+
+      <!-- 5. Ladang Hijau -->
+      <div id="loc-ladang" onclick="game.onLandmarkClicked('ladang')" class="absolute left-[80px] top-[920px] w-[220px] h-[160px] cursor-pointer z-20 group">
+        <div class="w-full h-full bg-lime-50/95 rounded-3xl p-3 shadow-2xl border-4 border-lime-600 flex flex-col items-center justify-between transition-transform duration-200 group-hover:scale-105">
+          <img src="https://imglink.cc/cdn/l9ADxmlLw1.png" alt="Ladang" class="w-24 h-24 object-contain filter drop-shadow" onerror="ui.handleImgFallback(this, 'farm')">
+          <div class="bg-lime-600 text-white font-black text-xs px-3 py-1 rounded-full shadow" data-i18n="locFarm">Ladang Sayur</div>
+        </div>
+        <div class="absolute -top-3 -right-2 bg-amber-400 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-full border border-white shadow" data-i18n="badgeHarvest">Tuai Hasil 🥕</div>
+      </div>
+
+      <!-- 6. Depot Penghantaran -->
+      <div id="loc-depot_penghantaran" onclick="game.onLandmarkClicked('depot_penghantaran')" class="absolute left-[1200px] top-[940px] w-[220px] h-[160px] cursor-pointer z-20 group">
+        <div class="w-full h-full bg-cyan-50/95 rounded-3xl p-3 shadow-2xl border-4 border-cyan-600 flex flex-col items-center justify-between transition-transform duration-200 group-hover:scale-105">
+          <img src="https://imglink.cc/cdn/27TPBiQf5q.png" alt="Depot Penghantaran" class="w-24 h-24 object-contain filter drop-shadow" onerror="ui.handleImgFallback(this, 'depot')">
+          <div class="bg-cyan-600 text-white font-black text-xs px-3 py-1 rounded-full shadow" data-i18n="locDepot">Depot Bungkusan</div>
+        </div>
+        <div class="absolute -top-3 -right-2 bg-orange-400 text-white text-[10px] font-black px-2 py-0.5 rounded-full border border-white shadow" data-i18n="badgeParcel">Hantar Parcel 📦</div>
+      </div>
+
+      <!-- 7. Balai Polis -->
+      <div id="loc-balai_polis" onclick="game.onLandmarkClicked('balai_polis')" class="absolute left-[460px] top-[600px] w-[210px] h-[160px] cursor-pointer z-20 group">
+        <div class="w-full h-full bg-indigo-50/95 rounded-3xl p-3 shadow-2xl border-4 border-indigo-600 flex flex-col items-center justify-between transition-transform duration-200 group-hover:scale-105">
+          <img src="https://imglink.cc/cdn/jifRdjhvc-.png" alt="Balai Polis" class="w-24 h-24 object-contain filter drop-shadow" onerror="ui.handleImgFallback(this, 'police')">
+          <div class="bg-indigo-700 text-white font-black text-xs px-3 py-1 rounded-full shadow" data-i18n="locPolice">Balai Kawalan</div>
+        </div>
+        <div class="absolute -top-3 -right-2 bg-indigo-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full border border-white shadow" data-i18n="badgePatrol">Rondaan 🚓</div>
+      </div>
+
+      <!-- KENDERAAN AKTIF PADA PETA -->
+      <div id="active-vehicle" class="vehicle-actor" style="left: 1060px; top: 700px; width: 110px; height: 85px;">
+        <div class="absolute -bottom-2 left-[10%] w-[80%] h-4 bg-slate-900/35 rounded-full blur-[2px] -z-10"></div>
+        <img id="active-vehicle-img" src="https://imglink.cc/cdn/EhXgwRWdj_.png" alt="Active Vehicle" class="w-full h-full object-contain filter drop-shadow" onerror="ui.handleImgFallback(this, 'fireTruck')">
+      </div>
+
+    </div>
+
+    <!-- Panel Bawah: Pilihan Kenderaan (Gaya Farmasi / Ferkalut) -->
+    <footer class="absolute bottom-2 left-0 right-0 z-[100] px-3 sm:px-6 pointer-events-none flex flex-col items-center">
+      
+      <!-- Kad Maklumat Ringkas Kenderaan Terpilih -->
+      <div id="selected-card-bubble" class="glass-hud rounded-2xl px-4 py-2 mb-2 flex items-center gap-3 pointer-events-auto shadow-2xl transition-all">
+        <img id="selected-mini-icon" src="https://imglink.cc/cdn/EhXgwRWdj_.png" alt="Selected Icon" class="w-10 h-10 object-contain" onerror="ui.handleImgFallback(this, 'fireTruck')">
+        <div class="text-left">
+          <div id="selected-vehicle-name" class="text-xs sm:text-sm font-black text-slate-900 leading-tight">Jentera Bomba</div>
+          <div id="selected-vehicle-desc" class="text-[10px] sm:text-xs font-bold text-rose-600">Tekan lokasi balai atau butang pandu!</div>
+        </div>
+        <button id="btn-drive-now" onclick="game.startMissionWithCurrentVehicle()" class="btn-3d-green text-white font-black text-xs sm:text-sm px-4 py-2 rounded-xl flex items-center gap-1 shadow">
+          <span data-i18n="btnDrive">Pandu</span> 🚀
+        </button>
+      </div>
+
+      <!-- Carousel 7 Kenderaan Utama -->
+      <div class="glass-hud rounded-3xl p-1.5 w-full max-w-2xl overflow-x-auto no-scrollbar pointer-events-auto flex items-center justify-between gap-1.5 shadow-2xl">
+        <div id="vehicle-carousel-list" class="flex items-center gap-2 w-full justify-between"></div>
+      </div>
+
+      <div class="w-full text-center py-1 pointer-events-none">
+        <span class="kindy-footer opacity-90">Made by Kindy Klub | © All Rights Reserved</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 3. MODAL INTERAKTIF MISI DI DESTINASI          -->
+  <!-- ============================================== -->
+  <div id="modal-mission-task" class="fixed inset-0 z-[120] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div class="glass-hud rounded-[32px] p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl border-4 border-amber-300 relative animate-pop-pulse">
+      
+      <div class="w-24 h-24 mx-auto mb-3 bg-gradient-to-tr from-amber-100 to-rose-100 rounded-3xl p-2 shadow-inner border border-amber-300 flex items-center justify-center overflow-hidden">
+        <img id="task-prop-img" src="https://imglink.cc/cdn/jifRdjhvc-.png" alt="Mission Task Prop" class="max-w-full max-h-full object-contain filter drop-shadow" onerror="ui.handleImgFallback(this, 'prop')">
+      </div>
+
+      <h2 id="task-modal-title" class="text-xl sm:text-2xl font-black text-slate-800 mb-1">Kecemasan Kebakaran!</h2>
+      <p id="task-modal-desc" class="text-xs sm:text-sm font-bold text-slate-600 mb-5">Tekan butang untuk sembur air dan selesaikan tugas!</p>
+
+      <button id="btn-perform-action" onclick="game.finishCurrentMissionTask()" class="w-full btn-3d-green text-white font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2">
+        <span id="task-btn-label">Sembur Air! 💦</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 4. VICTORY MODAL (SKRIN KEJAYAAN KINDY KLUB)   -->
+  <!-- ============================================== -->
+  <div id="victory-modal" class="fixed inset-0 z-[130] hidden items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md">
+    <div class="glass-hud rounded-[36px] p-6 sm:p-8 max-w-xs sm:max-w-sm w-full text-center shadow-2xl border-4 border-yellow-300 relative flex flex-col items-center">
+      
+      <!-- Avatar Maskot Meraikan Kejayaan -->
+      <div class="w-24 h-24 mx-auto mb-2 rounded-full bg-gradient-to-tr from-amber-200 to-yellow-100 border-4 border-yellow-400 p-2 shadow-inner flex items-center justify-center overflow-hidden">
+        <img src="https://imglink.cc/cdn/ksYVKTgSXJ.png" alt="Baby Otter" class="w-full h-full object-contain animate-mascot" onerror="ui.handleImgFallback(this, 'mascot')">
+      </div>
+      
+      <h2 data-i18n="victoryTitle" class="text-2xl font-black text-slate-800 mb-1">Syabas! Misi Selesai!</h2>
+      <p data-i18n="victorySubtitle" class="text-xs sm:text-sm font-bold text-slate-600 mb-3">Kamu telah membantu bandar Kindy Town!</p>
+
+      <!-- Badge Bintang Perolehan -->
+      <div class="bg-amber-100 border-2 border-amber-300 rounded-2xl px-4 py-2 mb-4 flex items-center gap-2">
+        <span class="text-2xl">⭐</span>
+        <span class="text-sm font-black text-amber-900">+10 <span data-i18n="starsEarned">Bintang Diperoleh!</span></span>
+      </div>
+
+      <!-- Butang Hijau: ▶ MISI SETERUSNYA -->
+      <button onclick="kindyApp.nextMission()" class="w-full btn-3d-green text-white font-black text-sm sm:text-base py-3.5 rounded-2xl shadow-lg mb-2.5 flex items-center justify-center gap-2">
+        <span>▶</span>
+        <span data-i18n="btnNextMission">MISI SETERUSNYA</span>
+      </button>
+
+      <!-- Butang Kembali ke Laman Utama -->
+      <button onclick="kindyApp.returnToFrontPage()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs py-2.5 rounded-xl transition-colors">
+        <span data-i18n="btnReturnFront">Kembali ke Laman Utama</span>
+      </button>
+
+      <div class="mt-4">
+        <span class="kindy-footer">Made by Kindy Klub | © All Rights Reserved</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- 5. KOLEKSI MODAL (36 KENDERAAN LENGKAP)        -->
+  <!-- ============================================== -->
+  <div id="collection-modal" class="fixed inset-0 z-[140] hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md">
+    <div class="glass-hud rounded-[32px] p-5 sm:p-6 max-w-lg w-full max-h-[88vh] flex flex-col shadow-2xl border-4 border-purple-400 text-left">
+      
+      <!-- Header Modal Koleksi -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">⚏</span>
+          <h2 data-i18n="collectionModalTitle" class="text-lg sm:text-xl font-black text-purple-900">Koleksi Kenderaan Kindy Klub</h2>
+        </div>
+        <button onclick="kindyApp.closeCollectionModal()" class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center hover:bg-rose-100 hover:text-rose-600 transition-colors">✕</button>
+      </div>
+
+      <p data-i18n="collectionModalDesc" class="text-[11px] font-bold text-slate-500 my-2">Lihat semua 36 kenderaan hebat dalam dunia Kindy Town!</p>
+
+      <!-- Grid 36 Kenderaan -->
+      <div id="collection-grid" class="flex-1 overflow-y-auto pr-1 grid grid-cols-3 sm:grid-cols-4 gap-2.5 py-2 no-scrollbar"></div>
+
+      <button onclick="kindyApp.closeCollectionModal()" class="mt-3 w-full btn-3d-purple text-white font-black text-xs sm:text-sm py-3 rounded-xl">
+        <span data-i18n="btnClose">Tutup</span>
+      </button>
+
+      <div class="mt-2 text-center">
+        <span class="kindy-footer">Made by Kindy Klub | © All Rights Reserved</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * PERLINDUNGAN RALAT GLOBAL UNTUK MENGELAKKAN POPUP "SOMETHING WENT WRONG"
+     */
+    window.addEventListener('error', function(e) {
+      console.warn('Kindy Town handled error gracefully:', e.message);
+    });
+
+    /**
+     * KAMUS DWIBAHASA LENGKAP KINDY KLUB (BM & EN)
+     */
+    const dict = {
+      BM: {
+        flag: '🇲🇾 BM',
+        pillCollection: 'Koleksi',
+        gameTitle: 'Kindy Town',
+        gameSubtitle: 'Misi Kenderaan & Kembara Bandar',
+        ageLevelLabel: 'Pilih Tahap Umur:',
+        level1Title: 'Tahap 1',
+        level1Age: '3-4 Tahun',
+        level2Title: 'Tahap 2',
+        level2Age: '5-6 Tahun',
+        level1Badge: 'Tahap 1 Aktif',
+        level2Badge: 'Tahap 2 Aktif',
+        btnStart: 'MULA MENYUSUN!',
+        btnCollection: 'LIHAT SEMUA KOLEKSI (36)',
+        recordScoreLabel: '🏆 Rekod Tertinggi:',
+        hudSubtext: 'Pilih kenderaan & mulakan misi!',
+        btnDrive: 'Pandu',
+        travelling: 'Menuju ke lokasi misi...',
+        victoryTitle: 'Syabas! Misi Selesai!',
+        victorySubtitle: 'Kamu telah membantu bandar Kindy Town!',
+        starsEarned: 'Bintang Diperoleh!',
+        btnNextMission: 'MISI SETERUSNYA',
+        btnReturnFront: 'Kembali ke Laman Utama',
+        collectionModalTitle: 'Koleksi Kenderaan Kindy Klub',
+        collectionModalDesc: 'Lihat semua 36 kenderaan hebat dalam dunia Kindy Town!',
+        btnClose: 'Tutup',
+        locFireStation: 'Balai Bomba',
+        badgeFire: 'Misi Api! 🔥',
+        locHospital: 'Hospital Kindy',
+        badgeEmergency: 'Kecemasan 🩺',
+        locConstruction: 'Tapak Binaan',
+        badgeCrane: 'Angkat Kren 🏗️',
+        locRecycle: 'Kutipan Sampah',
+        badgeBin: 'Tong Kitar ♻️',
+        locFarm: 'Ladang Sayur',
+        badgeHarvest: 'Tuai Hasil 🥕',
+        locDepot: 'Depot Bungkusan',
+        badgeParcel: 'Hantar Parcel 📦',
+        locPolice: 'Balai Kawalan',
+        badgePatrol: 'Rondaan 🚓'
+      },
+      EN: {
+        flag: '🇬🇧 EN',
+        pillCollection: 'Collection',
+        gameTitle: 'Kindy Town',
+        gameSubtitle: 'Vehicle Mission & City Adventure',
+        ageLevelLabel: 'Select Age Level:',
+        level1Title: 'Level 1',
+        level1Age: '3-4 Years',
+        level2Title: 'Level 2',
+        level2Age: '5-6 Years',
+        level1Badge: 'Level 1 Active',
+        level2Badge: 'Level 2 Active',
+        btnStart: 'START MISSION!',
+        btnCollection: 'VIEW ALL COLLECTION (36)',
+        recordScoreLabel: '🏆 High Score:',
+        hudSubtext: 'Pick a vehicle & start mission!',
+        btnDrive: 'Drive',
+        travelling: 'Cruising to mission location...',
+        victoryTitle: 'Great Job! Mission Complete!',
+        victorySubtitle: 'You have helped the city of Kindy Town!',
+        starsEarned: 'Stars Earned!',
+        btnNextMission: 'NEXT MISSION',
+        btnReturnFront: 'Back to Home Page',
+        collectionModalTitle: 'Kindy Klub Vehicle Collection',
+        collectionModalDesc: 'Explore all 36 cool vehicles in Kindy Town!',
+        btnClose: 'Close',
+        locFireStation: 'Fire Station',
+        badgeFire: 'Fire Mission! 🔥',
+        locHospital: 'Kindy Hospital',
+        badgeEmergency: 'Emergency 🩺',
+        locConstruction: 'Building Site',
+        badgeCrane: 'Lift Crane 🏗️',
+        locRecycle: 'Trash Pickup',
+        badgeBin: 'Recycle ♻️',
+        locFarm: 'Green Farm',
+        badgeHarvest: 'Harvest 🥕',
+        locDepot: 'Parcel Depot',
+        badgeParcel: 'Deliver 📦',
+        locPolice: 'Police Station',
+        badgePatrol: 'Patrol 🚓'
+      }
+    };
+
+    /**
+     * 7 KENDERAAN MISI UTAMA DENGAN ASET LENGKAP
+     */
+    const MISSION_VEHICLES = {
+      fireTruck: {
+        id: 'fireTruck',
+        nameBM: 'Jentera Bomba',
+        nameEN: 'Fire Engine',
+        descBM: 'Padamkan api kebakaran di bandar!',
+        descEN: 'Extinguish fires around town!',
+        url: 'https://imglink.cc/cdn/EhXgwRWdj_.png',
+        targetLocation: 'balai_bomba',
+        taskProp: 'https://imglink.cc/cdn/jifRdjhvc-.png',
+        actionLabelBM: 'Sembur Air! 💦',
+        actionLabelEN: 'Spray Water! 💦'
+      },
+      ambulance: {
+        id: 'ambulance',
+        nameBM: 'Ambulans',
+        nameEN: 'Ambulance',
+        descBM: 'Bawa pesakit ke Hospital.',
+        descEN: 'Transport patients to Hospital.',
+        url: 'https://imglink.cc/cdn/ol1ygJuOEy.png',
+        targetLocation: 'hospital',
+        taskProp: 'https://imglink.cc/cdn/eVbAiTjSEc.png',
+        actionLabelBM: 'Rawat Pesakit! 🩺',
+        actionLabelEN: 'Treat Patient! 🩺'
+      },
+      policeCar: {
+        id: 'policeCar',
+        nameBM: 'Kereta Polis',
+        nameEN: 'Police Car',
+        descBM: 'Rondaan keselamatan jalanan.',
+        descEN: 'Patrol and roadside safety.',
+        url: 'https://imglink.cc/cdn/xQFJwxFvqy.png',
+        targetLocation: 'balai_polis',
+        taskProp: 'https://imglink.cc/cdn/t-MpLKmeAV.png',
+        actionLabelBM: 'Bantu Pemandu! 🔧',
+        actionLabelEN: 'Assist Driver! 🔧'
+      },
+      garbageTruck: {
+        id: 'garbageTruck',
+        nameBM: 'Lori Sampah',
+        nameEN: 'Garbage Truck',
+        descBM: 'Kutip sisa kitar semula.',
+        descEN: 'Collect community recycling.',
+        url: 'https://imglink.cc/cdn/WgixmfY8iA.png',
+        targetLocation: 'pusat_sampah',
+        taskProp: 'https://imglink.cc/cdn/z33dcuy4WV.png',
+        actionLabelBM: 'Kutip Sampah! ♻️',
+        actionLabelEN: 'Collect Trash! ♻️'
+      },
+      mobileCrane: {
+        id: 'mobileCrane',
+        nameBM: 'Kren Bergerak',
+        nameEN: 'Mobile Crane',
+        descBM: 'Angkat bahan binaan keluli.',
+        descEN: 'Lift heavy construction beams.',
+        url: 'https://imglink.cc/cdn/aC2nqh5Id5.png',
+        targetLocation: 'tapak_binaan',
+        taskProp: 'https://imglink.cc/cdn/Ty8JYAGLOK.png',
+        actionLabelBM: 'Angkat Bahan! 🏗️',
+        actionLabelEN: 'Lift Steel! 🏗️'
+      },
+      tractor: {
+        id: 'tractor',
+        nameBM: 'Traktor',
+        nameEN: 'Tractor',
+        descBM: 'Bantu tuai hasil di ladang.',
+        descEN: 'Harvest fresh farm crops.',
+        url: 'https://imglink.cc/cdn/3kK8yK7aV4.png',
+        targetLocation: 'ladang',
+        taskProp: 'https://imglink.cc/cdn/TllFkwK98I.png',
+        actionLabelBM: 'Tuai Tanaman! 🥕',
+        actionLabelEN: 'Harvest Crops! 🥕'
+      },
+      deliveryTruck: {
+        id: 'deliveryTruck',
+        nameBM: 'Lori Bungkusan',
+        nameEN: 'Delivery Truck',
+        descBM: 'Hantar bungkusan ke rumah.',
+        descEN: 'Deliver express packages.',
+        url: 'https://imglink.cc/cdn/bVO6J4cwSO.png',
+        targetLocation: 'depot_penghantaran',
+        taskProp: 'https://imglink.cc/cdn/89QUAomxSa.png',
+        actionLabelBM: 'Hantar Bungkusan! 📦',
+        actionLabelEN: 'Deliver Parcel! 📦'
+      }
+    };
+
+    /**
+     * 36 ASET KENDERAAN UNTUK MODAL KOLEKSI
+     */
+    const ALL_36_VEHICLES = [
+      { nameBM: 'Kereta', nameEN: 'Car', url: 'https://imglink.cc/cdn/GCI1rdVybL.png' },
+      { nameBM: 'Bas', nameEN: 'Bus', url: 'https://imglink.cc/cdn/xxf8svP6Qq.png' },
+      { nameBM: 'Jentera Bomba', nameEN: 'Fire Engine', url: 'https://imglink.cc/cdn/EhXgwRWdj_.png' },
+      { nameBM: 'Ambulans', nameEN: 'Ambulance', url: 'https://imglink.cc/cdn/ol1ygJuOEy.png' },
+      { nameBM: 'Kereta Polis', nameEN: 'Police Car', url: 'https://imglink.cc/cdn/xQFJwxFvqy.png' },
+      { nameBM: 'Lori Bungkusan', nameEN: 'Delivery Truck', url: 'https://imglink.cc/cdn/bVO6J4cwSO.png' },
+      { nameBM: 'Motosikal', nameEN: 'Motorcycle', url: 'https://imglink.cc/cdn/b9B-HFLAA2.png' },
+      { nameBM: 'Basikal', nameEN: 'Bicycle', url: 'https://imglink.cc/cdn/uPgnU2qTFu.png' },
+      { nameBM: 'Traktor', nameEN: 'Tractor', url: 'https://imglink.cc/cdn/3kK8yK7aV4.png' },
+      { nameBM: 'Ekskavator', nameEN: 'Excavator', url: 'https://imglink.cc/cdn/5b4y149hvs.png' },
+      { nameBM: 'Van Sekolah', nameEN: 'School Van', url: 'https://imglink.cc/cdn/LMiT--D2A3.png' },
+      { nameBM: 'Lori Sampah', nameEN: 'Garbage Truck', url: 'https://imglink.cc/cdn/WgixmfY8iA.png' },
+      { nameBM: 'Lori Tangki', nameEN: 'Tanker Truck', url: 'https://imglink.cc/cdn/Eh5PWkmQnd.png' },
+      { nameBM: 'Penggelek Jalan', nameEN: 'Road Roller', url: 'https://imglink.cc/cdn/9QHbZRyFnJ.png' },
+      { nameBM: 'Kren Bergerak', nameEN: 'Mobile Crane', url: 'https://imglink.cc/cdn/aC2nqh5Id5.png' },
+      { nameBM: 'Kereta Golf', nameEN: 'Golf Cart', url: 'https://imglink.cc/cdn/YYfDWLv1Qm.png' },
+      { nameBM: 'ATV', nameEN: 'ATV', url: 'https://imglink.cc/cdn/87T6StK1LC.png' },
+      { nameBM: 'Jet', nameEN: 'Jet', url: 'https://imglink.cc/cdn/5VnGiT-HGM.png' },
+      { nameBM: 'Kereta Api', nameEN: 'Train', url: 'https://imglink.cc/cdn/UjxLzCBPxE.png' },
+      { nameBM: 'Kapal Terbang', nameEN: 'Airplane', url: 'https://imglink.cc/cdn/yjc6-Fk31h.png' },
+      { nameBM: 'Helikopter', nameEN: 'Helicopter', url: 'https://imglink.cc/cdn/iUHhXzsvIs.png' },
+      { nameBM: 'Bot', nameEN: 'Boat', url: 'https://imglink.cc/cdn/alXkPfhpRY.png' },
+      { nameBM: 'Belon Udara', nameEN: 'Hot-Air Balloon', url: 'https://imglink.cc/cdn/fbhwcZVdcZ.png' },
+      { nameBM: 'Teksi', nameEN: 'Taxi', url: 'https://imglink.cc/cdn/Brgnu8E96Y.png' },
+      { nameBM: 'Lori Jongket', nameEN: 'Dump Truck', url: 'https://imglink.cc/cdn/HfwfjAl3UK.png' },
+      { nameBM: 'Jentolak', nameEN: 'Bulldozer', url: 'https://imglink.cc/cdn/MSXEIpnR-5.png' },
+      { nameBM: 'Feri', nameEN: 'Ferry', url: 'https://imglink.cc/cdn/sF5_hJ4MTr.png' },
+      { nameBM: 'Kapal Selam', nameEN: 'Submarine', url: 'https://imglink.cc/cdn/EU30_j2rjf.png' },
+      { nameBM: 'Roket', nameEN: 'Rocket', url: 'https://imglink.cc/cdn/ktbrNFOBUp.png' },
+      { nameBM: 'Yat', nameEN: 'Yacht', url: 'https://imglink.cc/cdn/bjxCl0NWSD.png' },
+      { nameBM: 'Kapal Angkasa', nameEN: 'Spaceship', url: 'https://imglink.cc/cdn/CcIUAMrXdI.png' },
+      { nameBM: 'Kapal Persiaran', nameEN: 'Cruise Ship', url: 'https://imglink.cc/cdn/dot-7x7x_y.png' },
+      { nameBM: 'Kapal Kargo', nameEN: 'Cargo Ship', url: 'https://imglink.cc/cdn/elRQqEdPdO.png' },
+      { nameBM: 'Kayak', nameEN: 'Kayak', url: 'https://imglink.cc/cdn/wSAYMDIoSM.png' },
+      { nameBM: 'Jet Ski', nameEN: 'Jet Ski', url: 'https://imglink.cc/cdn/DOEJHE5xrT.png' },
+      { nameBM: 'Forklift', nameEN: 'Forklift', url: 'https://imglink.cc/cdn/9QHbZRyFnJ.png' }
+    ];
+
+    /**
+     * LALUAN KOORDINAT JALAN RAYA (WAYPOINTS)
+     */
+    const WAYPOINTS_PATHS = {
+      'balai_bomba': [
+        { x: 1060, y: 700 },
+        { x: 350, y: 700 },
+        { x: 350, y: 380 },
+        { x: 260, y: 380 }
+      ],
+      'hospital': [
+        { x: 1060, y: 700 },
+        { x: 1740, y: 700 },
+        { x: 1740, y: 380 },
+        { x: 1880, y: 380 }
+      ],
+      'balai_polis': [
+        { x: 1060, y: 700 },
+        { x: 640, y: 700 }
+      ],
+      'tapak_binaan': [
+        { x: 1060, y: 700 },
+        { x: 1080, y: 380 },
+        { x: 1220, y: 380 }
+      ],
+      'pusat_sampah': [
+        { x: 1060, y: 700 },
+        { x: 1740, y: 700 },
+        { x: 1740, y: 1060 },
+        { x: 1880, y: 1060 }
+      ],
+      'ladang': [
+        { x: 1060, y: 700 },
+        { x: 350, y: 700 },
+        { x: 350, y: 1060 },
+        { x: 220, y: 1060 }
+      ],
+      'depot_penghantaran': [
+        { x: 1060, y: 700 },
+        { x: 1080, y: 1060 },
+        { x: 1220, y: 1060 }
+      ]
+    };
+
+    /**
+     * SISTEM AUDIO SINTETIK KALIS RALAT (WEB AUDIO API DENGAN TRY/CATCH)
+     */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        try {
+          if (!this.ctx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) this.ctx = new AudioContext();
+          }
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume().catch(() => {});
+          }
+        } catch (e) {
+          // Audio blocked by policy - silent fail tanpa crash
+        }
+      }
+      toggle() {
+        this.enabled = !this.enabled;
+        const icon = this.enabled ? '🔊' : '🔇';
+        const ind1 = document.getElementById('sound-indicator');
+        const ind2 = document.getElementById('game-sound-indicator');
+        if (ind1) ind1.textContent = icon;
+        if (ind2) ind2.textContent = icon;
+        if (this.enabled) this.playSound('click');
+      }
+      playSound(type) {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+
+          if (type === 'click') {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(440, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.09);
+          } else if (type === 'engine') {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(120, now);
+            osc.frequency.linearRampToValueAtTime(240, now + 0.2);
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.25);
+          } else if (type === 'victory') {
+            [523.25, 659.25, 783.99, 1046.5].forEach((f, idx) => {
+              const osc = this.ctx.createOscillator();
+              const gain = this.ctx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(f, now + idx * 0.08);
+              gain.gain.setValueAtTime(0.12, now + idx * 0.08);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.3);
+              osc.connect(gain);
+              gain.connect(this.ctx.destination);
+              osc.start(now + idx * 0.08);
+              osc.stop(now + idx * 0.08 + 0.32);
+            });
+          }
+        } catch (e) {
+          // Abaikan sebarang sekatan audio tanpa crash
+        }
+      }
+      playOtter() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(650, now);
+          osc.frequency.exponentialRampToValueAtTime(1100, now + 0.12);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.14);
+        } catch (e) {}
+      }
+    }
+  </script>
+
+  <script>
+    /**
+     * PENGURUS BAHASA (BILINGUAL MANAGER BM/EN)
+     */
+    class LanguageManager {
+      constructor() {
+        this.current = 'BM';
+      }
+      set(code) {
+        if (code === 'BM' || code === 'EN') {
+          this.current = code;
+          this.apply();
+          if (window.sound) sound.playSound('click');
+        }
+      }
+      toggle() {
+        this.set(this.current === 'BM' ? 'EN' : 'BM');
+      }
+      apply() {
+        try {
+          document.documentElement.lang = this.current === 'BM' ? 'ms' : 'en';
+          const d = dict[this.current] || dict.BM;
+
+          // Kemas kini semua elemen teks bertanda data-i18n
+          document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (d[key]) el.textContent = d[key];
+          });
+
+          // Kemas kini gaya butang pilihan bahasa Front Page
+          const btnBM = document.getElementById('lang-btn-bm');
+          const btnEN = document.getElementById('lang-btn-en');
+          if (btnBM && btnEN) {
+            if (this.current === 'BM') {
+              btnBM.className = 'px-3 py-1 rounded-xl text-xs font-black transition-all bg-emerald-500 text-white shadow-sm cursor-pointer';
+              btnEN.className = 'px-3 py-1 rounded-xl text-xs font-black transition-all text-slate-600 hover:text-emerald-700 cursor-pointer';
+            } else {
+              btnEN.className = 'px-3 py-1 rounded-xl text-xs font-black transition-all bg-emerald-500 text-white shadow-sm cursor-pointer';
+              btnBM.className = 'px-3 py-1 rounded-xl text-xs font-black transition-all text-slate-600 hover:text-emerald-700 cursor-pointer';
+            }
+          }
+
+          // Kemas kini label bahasa HUD dalam game
+          const gameLangLabel = document.getElementById('game-lang-label');
+          if (gameLangLabel) gameLangLabel.textContent = d.flag;
+
+          // Kemas kini lencana umur aktif
+          const activeBadge = document.getElementById('active-age-badge');
+          if (activeBadge && window.profile) {
+            activeBadge.textContent = profile.data.ageLevel === 1 ? d.level1Badge : d.level2Badge;
+          }
+
+          // Kemas kini teks kenderaan semasa
+          if (window.game) {
+            game.updateSelectedVehicleText();
+          }
+          if (window.ui) {
+            ui.renderVehicleCarousel();
+          }
+
+          if (window.profile) {
+            profile.save();
+          }
+        } catch (err) {
+          console.warn('Lang apply warning:', err);
+        }
+      }
+    }
+
+    /**
+     * PENGURUS PROFIL & BINTANG DENGAN LOCALSTORAGE SELAMAT
+     */
+    class ProfileManager {
+      constructor() {
+        this.key = 'kinderKlub_vehicleMission_playerProfile';
+        this.data = this.load();
+      }
+      load() {
+        try {
+          const raw = localStorage.getItem(this.key);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            return {
+              stars: parsed.stars || 0,
+              highScore: parsed.highScore || 0,
+              ageLevel: parsed.ageLevel || 1,
+              lang: parsed.lang || 'BM'
+            };
+          }
+        } catch (e) {
+          // Sandboxed iframe tanpa localStorage - fallback selamat
+        }
+        return { stars: 0, highScore: 0, ageLevel: 1, lang: 'BM' };
+      }
+      save() {
+        try {
+          if (window.kindyLang) this.data.lang = window.kindyLang.current;
+          localStorage.setItem(this.key, JSON.stringify(this.data));
+        } catch (e) {}
+      }
+      addStars(amount = 10) {
+        this.data.stars += amount;
+        if (this.data.stars > this.data.highScore) {
+          this.data.highScore = this.data.stars;
+        }
+        this.save();
+        this.updateUI();
+      }
+      updateUI() {
+        const starEl1 = document.getElementById('front-star-count');
+        const starEl2 = document.getElementById('game-star-count');
+        const highEl = document.getElementById('front-high-score');
+        if (starEl1) starEl1.textContent = this.data.stars;
+        if (starEl2) starEl2.textContent = this.data.stars;
+        if (highEl) highEl.textContent = this.data.highScore;
+      }
+    }
+
+    /**
+     * PENGURUS ALIRAN APLIKASI KINDY KLUB
+     */
+    class KindyKlubApp {
+      constructor() {
+        this.currentView = 'front';
+      }
+      setLanguage(code) {
+        if (window.kindyLang) {
+          window.kindyLang.set(code);
+        }
+      }
+      toggleLanguage() {
+        if (window.kindyLang) {
+          window.kindyLang.toggle();
+        }
+      }
+      toggleSound() {
+        if (window.sound) {
+          window.sound.toggle();
+        }
+      }
+      playOtter() {
+        if (window.sound) {
+          window.sound.playOtter();
+        }
+      }
+      selectAgeLevel(level) {
+        if (window.profile) {
+          profile.data.ageLevel = level;
+          profile.save();
+        }
+        if (window.sound) sound.playSound('click');
+
+        const btn1 = document.getElementById('level-btn-1');
+        const btn2 = document.getElementById('level-btn-2');
+        const badge = document.getElementById('active-age-badge');
+        const currentLang = window.kindyLang ? window.kindyLang.current : 'BM';
+        const d = dict[currentLang] || dict.BM;
+
+        if (level === 1) {
+          if (btn1) btn1.className = 'p-2 sm:p-2.5 rounded-xl border-2 border-emerald-500 bg-white text-emerald-900 flex flex-col items-center justify-center transition-all shadow-md cursor-pointer';
+          if (btn2) btn2.className = 'p-2 sm:p-2.5 rounded-xl border-2 border-slate-200 bg-white/70 text-slate-500 hover:border-emerald-300 flex flex-col items-center justify-center transition-all shadow-sm cursor-pointer';
+          if (badge) badge.textContent = d.level1Badge;
+        } else {
+          if (btn2) btn2.className = 'p-2 sm:p-2.5 rounded-xl border-2 border-emerald-500 bg-white text-emerald-900 flex flex-col items-center justify-center transition-all shadow-md cursor-pointer';
+          if (btn1) btn1.className = 'p-2 sm:p-2.5 rounded-xl border-2 border-slate-200 bg-white/70 text-slate-500 hover:border-emerald-300 flex flex-col items-center justify-center transition-all shadow-sm cursor-pointer';
+          if (badge) badge.textContent = d.level2Badge;
+        }
+      }
+      startGame() {
+        if (window.sound) sound.playSound('click');
+        const front = document.getElementById('front-page');
+        const view = document.getElementById('game-viewport');
+        if (front) front.style.display = 'none';
+        if (view) view.style.display = 'block';
+        this.currentView = 'game';
+
+        setTimeout(() => {
+          if (window.game) {
+            game.clampCamera();
+            game.recenterCameraToVehicle(false);
+          }
+        }, 60);
+      }
+      returnToFrontPage() {
+        if (window.sound) sound.playSound('click');
+        const view = document.getElementById('game-viewport');
+        const front = document.getElementById('front-page');
+        if (view) view.style.display = 'none';
+        if (front) front.style.display = 'flex';
+        this.currentView = 'front';
+        if (window.profile) profile.updateUI();
+      }
+      openCollectionModal() {
+        if (window.sound) sound.playSound('click');
+        const modal = document.getElementById('collection-modal');
+        const grid = document.getElementById('collection-grid');
+        if (!modal || !grid) return;
+        
+        const cur = window.kindyLang ? window.kindyLang.current : 'BM';
+        grid.innerHTML = ALL_36_VEHICLES.map(v => `
+          <div class="bg-white rounded-2xl p-2.5 border-2 border-purple-200 shadow-sm flex flex-col items-center text-center">
+            <img src="${v.url}" alt="${v.nameEN}" class="w-12 h-12 object-contain filter drop-shadow mb-1" onerror="ui.handleImgFallback(this, 'car')">
+            <span class="text-[10px] font-black text-slate-800 leading-tight">
+              ${cur === 'BM' ? v.nameBM : v.nameEN}
+            </span>
+          </div>
+        `).join('');
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+      closeCollectionModal() {
+        if (window.sound) sound.playSound('click');
+        const modal = document.getElementById('collection-modal');
+        if (modal) {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        }
+      }
+      nextMission() {
+        if (window.sound) sound.playSound('click');
+        const vic = document.getElementById('victory-modal');
+        if (vic) {
+          vic.classList.add('hidden');
+          vic.classList.remove('flex');
+        }
+
+        const keys = Object.keys(MISSION_VEHICLES);
+        const nextIdx = (keys.indexOf(game.currentVehicleKey) + 1) % keys.length;
+        game.selectVehicle(keys[nextIdx]);
+        game.returnToTownHub();
+      }
+    }
+  </script>
+
+  <script>
+    /**
+     * ENJIN PETA 2.5D, WAYPOINTS PATHING & KAMERA JEJAK (GAYA FARMASI)
+     */
+    class KindyTownGame {
+      constructor() {
+        this.viewport = document.getElementById('game-viewport');
+        this.map = document.getElementById('game-map');
+        this.vehicleEl = document.getElementById('active-vehicle');
+        this.vehicleImg = document.getElementById('active-vehicle-img');
+
+        this.mapWidth = 2200;
+        this.mapHeight = 1350;
+
+        this.camX = 0;
+        this.camY = 0;
+
+        this.vehicleX = 1060;
+        this.vehicleY = 700;
+        this.currentVehicleKey = 'fireTruck';
+        this.isMoving = false;
+
+        this.isDragging = false;
+        this.startX = 0;
+        this.startY = 0;
+        this.initialCamX = 0;
+        this.initialCamY = 0;
+      }
+      init() {
+        this.setupPanGestures();
+        this.selectVehicle('fireTruck');
+        this.setVehiclePosition(this.vehicleX, this.vehicleY);
+
+        window.addEventListener('resize', () => {
+          if (kindyApp.currentView === 'game') this.clampCamera();
+        });
+      }
+      updateCamera(targetX, targetY, smooth = false) {
+        if (!this.viewport || !this.map) return;
+        const viewW = this.viewport.clientWidth;
+        const viewH = this.viewport.clientHeight;
+
+        let desiredCamX = (viewW / 2) - targetX;
+        let desiredCamY = (viewH / 2) - targetY;
+
+        const minCamX = viewW - this.mapWidth;
+        const minCamY = viewH - this.mapHeight;
+
+        desiredCamX = Math.min(0, Math.max(minCamX, desiredCamX));
+        desiredCamY = Math.min(0, Math.max(minCamY, desiredCamY));
+
+        this.camX = desiredCamX;
+        this.camY = desiredCamY;
+
+        this.map.style.transition = smooth ? 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)' : 'none';
+        this.map.style.transform = `translate(${this.camX}px, ${this.camY}px)`;
+      }
+      clampCamera() {
+        this.updateCamera(this.vehicleX, this.vehicleY, false);
+      }
+      recenterCameraToVehicle(smooth = true) {
+        sound.playSound('click');
+        this.updateCamera(this.vehicleX, this.vehicleY, smooth);
+      }
+      setupPanGestures() {
+        const onPointerDown = (e) => {
+          if (this.isMoving) return;
+          this.isDragging = true;
+          this.startX = e.clientX || (e.touches && e.touches[0].clientX);
+          this.startY = e.clientY || (e.touches && e.touches[0].clientY);
+          this.initialCamX = this.camX;
+          this.initialCamY = this.camY;
+          if (this.map) this.map.style.transition = 'none';
+        };
+
+        const onPointerMove = (e) => {
+          if (!this.isDragging || this.isMoving || !this.map) return;
+          const curX = e.clientX || (e.touches && e.touches[0].clientX);
+          const curY = e.clientY || (e.touches && e.touches[0].clientY);
+
+          const deltaX = curX - this.startX;
+          const deltaY = curY - this.startY;
+
+          let newCamX = this.initialCamX + deltaX;
+          let newCamY = this.initialCamY + deltaY;
+
+          const viewW = this.viewport.clientWidth;
+          const viewH = this.viewport.clientHeight;
+          const minCamX = viewW - this.mapWidth;
+          const minCamY = viewH - this.mapHeight;
+
+          newCamX = Math.min(0, Math.max(minCamX, newCamX));
+          newCamY = Math.min(0, Math.max(minCamY, newCamY));
+
+          this.camX = newCamX;
+          this.camY = newCamY;
+          this.map.style.transform = `translate(${this.camX}px, ${this.camY}px)`;
+        };
+
+        const onPointerUp = () => {
+          this.isDragging = false;
+        };
+
+        this.viewport.addEventListener('mousedown', onPointerDown);
+        window.addEventListener('mousemove', onPointerMove);
+        window.addEventListener('mouseup', onPointerUp);
+
+        this.viewport.addEventListener('touchstart', onPointerDown, { passive: true });
+        window.addEventListener('touchmove', onPointerMove, { passive: true });
+        window.addEventListener('touchend', onPointerUp);
+      }
+      selectVehicle(key) {
+        if (this.isMoving) return;
+        this.currentVehicleKey = key;
+        const v = MISSION_VEHICLES[key];
+        if (!v) return;
+
+        if (this.vehicleImg) this.vehicleImg.src = v.url;
+        const mini = document.getElementById('selected-mini-icon');
+        if (mini) mini.src = v.url;
+
+        this.updateSelectedVehicleText();
+        sound.playSound('click');
+        if (window.ui) ui.highlightActiveCarouselBtn(key);
+      }
+      updateSelectedVehicleText() {
+        const v = MISSION_VEHICLES[this.currentVehicleKey];
+        if (!v) return;
+        const nameEl = document.getElementById('selected-vehicle-name');
+        const descEl = document.getElementById('selected-vehicle-desc');
+        if (nameEl) nameEl.textContent = lang.current === 'BM' ? v.nameBM : v.nameEN;
+        if (descEl) descEl.textContent = lang.current === 'BM' ? v.descBM : v.descEN;
+      }
+      setVehiclePosition(x, y) {
+        this.vehicleX = x;
+        this.vehicleY = y;
+        if (this.vehicleEl) {
+          this.vehicleEl.style.left = `${x}px`;
+          this.vehicleEl.style.top = `${y}px`;
+        }
+      }
+      startMissionWithCurrentVehicle() {
+        if (this.isMoving) return;
+        const v = MISSION_VEHICLES[this.currentVehicleKey];
+        if (!v) return;
+
+        const pathKey = v.targetLocation;
+        const waypoints = WAYPOINTS_PATHS[pathKey];
+        if (!waypoints) return;
+
+        this.startGlideAlongPath(waypoints, () => {
+          this.onArrivedAtDestination(v);
+        });
+      }
+      onLandmarkClicked(locKey) {
+        if (this.isMoving) return;
+
+        for (const [key, v] of Object.entries(MISSION_VEHICLES)) {
+          if (v.targetLocation === locKey) {
+            this.selectVehicle(key);
+            break;
+          }
+        }
+
+        const waypoints = WAYPOINTS_PATHS[locKey];
+        if (waypoints) {
+          const v = MISSION_VEHICLES[this.currentVehicleKey];
+          this.startGlideAlongPath(waypoints, () => {
+            this.onArrivedAtDestination(v);
+          });
+        }
+      }
+      startGlideAlongPath(waypoints, onCompleteCallback) {
+        this.isMoving = true;
+        sound.playSound('engine');
+
+        if (this.vehicleEl) this.vehicleEl.classList.add('vibrating');
+        const statusPill = document.getElementById('mission-status-pill');
+        if (statusPill) statusPill.classList.remove('hidden');
+
+        const startPoint = waypoints[0];
+        this.setVehiclePosition(startPoint.x, startPoint.y);
+        this.updateCamera(startPoint.x, startPoint.y, true);
+
+        let currentIndex = 0;
+        const totalPoints = waypoints.length;
+
+        const moveToNextPoint = () => {
+          currentIndex++;
+          if (currentIndex >= totalPoints) {
+            this.isMoving = false;
+            if (this.vehicleEl) this.vehicleEl.classList.remove('vibrating');
+            if (statusPill) statusPill.classList.add('hidden');
+            if (onCompleteCallback) onCompleteCallback();
+            return;
+          }
+
+          const target = waypoints[currentIndex];
+          const prev = waypoints[currentIndex - 1];
+
+          // Auto-flip cermin arah hadap kenderaan
+          if (this.vehicleImg) {
+            if (target.x < prev.x) {
+              this.vehicleImg.style.transform = 'scaleX(-1)';
+            } else if (target.x > prev.x) {
+              this.vehicleImg.style.transform = 'scaleX(1)';
+            }
+          }
+
+          const dist = Math.hypot(target.x - prev.x, target.y - prev.y);
+          const duration = Math.max(0.4, dist / 320);
+
+          if (this.vehicleEl) {
+            this.vehicleEl.style.transition = `left ${duration}s linear, top ${duration}s linear`;
+          }
+          this.setVehiclePosition(target.x, target.y);
+
+          // Jejak kamera secara konsisten
+          const startTime = performance.now();
+          const startX = prev.x;
+          const startY = prev.y;
+          const deltaX = target.x - prev.x;
+          const deltaY = target.y - prev.y;
+
+          const trackCameraStep = (now) => {
+            const progress = Math.min(1, (now - startTime) / (duration * 1000));
+            const currentInterpX = startX + deltaX * progress;
+            const currentInterpY = startY + deltaY * progress;
+
+            this.updateCamera(currentInterpX, currentInterpY, false);
+
+            if (progress < 1 && this.isMoving) {
+              requestAnimationFrame(trackCameraStep);
+            }
+          };
+          requestAnimationFrame(trackCameraStep);
+
+          setTimeout(moveToNextPoint, duration * 1000);
+        };
+
+        setTimeout(moveToNextPoint, 100);
+      }
+      onArrivedAtDestination(vehicleData) {
+        sound.playOtter();
+        const modal = document.getElementById('modal-mission-task');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        const propImg = document.getElementById('task-prop-img');
+        const titleEl = document.getElementById('task-modal-title');
+        const descEl = document.getElementById('task-modal-desc');
+        const btnLabel = document.getElementById('task-btn-label');
+
+        if (propImg) propImg.src = vehicleData.taskProp;
+        if (titleEl) titleEl.textContent = lang.current === 'BM' ? vehicleData.nameBM : vehicleData.nameEN;
+        if (descEl) descEl.textContent = lang.current === 'BM' ? vehicleData.descBM : vehicleData.descEN;
+        if (btnLabel) btnLabel.textContent = lang.current === 'BM' ? vehicleData.actionLabelBM : vehicleData.actionLabelEN;
+      }
+      finishCurrentMissionTask() {
+        sound.playSound('victory');
+        const taskModal = document.getElementById('modal-mission-task');
+        if (taskModal) {
+          taskModal.classList.add('hidden');
+          taskModal.classList.remove('flex');
+        }
+
+        profile.addStars(10);
+
+        const vic = document.getElementById('victory-modal');
+        if (vic) {
+          vic.classList.remove('hidden');
+          vic.classList.add('flex');
+        }
+      }
+      returnToTownHub() {
+        const returnPath = [
+          { x: this.vehicleX, y: this.vehicleY },
+          { x: 1060, y: 700 }
+        ];
+        this.startGlideAlongPath(returnPath, () => {
+          this.recenterCameraToVehicle(true);
+        });
+      }
+    }
+  </script>
+
+  <script>
+    /**
+     * PENGURUS UI CAROUSEL & FALLBACK IMEJ PINTAR
+     */
+    class UIManager {
+      init() {
+        this.renderVehicleCarousel();
+      }
+      renderVehicleCarousel() {
+        const container = document.getElementById('vehicle-carousel-list');
+        if (!container) return;
+
+        container.innerHTML = Object.values(MISSION_VEHICLES).map(v => {
+          return `
+            <button id="carousel-btn-${v.id}" onclick="game.selectVehicle('${v.id}')" 
+              class="candy-btn flex-1 min-w-[50px] sm:min-w-[64px] p-1.5 sm:p-2 rounded-2xl flex flex-col items-center justify-center bg-white/90 border-2 border-transparent hover:border-amber-400 transition-all">
+              <img src="${v.url}" alt="${v.nameEN}" class="w-7 h-7 sm:w-9 sm:h-9 object-contain filter drop-shadow" onerror="ui.handleImgFallback(this, '${v.id}')">
+              <span class="text-[9px] sm:text-[10px] font-black text-slate-800 leading-tight mt-0.5 truncate w-full text-center">
+                ${lang.current === 'BM' ? v.nameBM.split(' ')[0] : v.nameEN.split(' ')[0]}
+              </span>
+            </button>
+          `;
+        }).join('');
+
+        if (window.game) {
+          this.highlightActiveCarouselBtn(game.currentVehicleKey);
+        }
+      }
+      highlightActiveCarouselBtn(key) {
+        Object.keys(MISSION_VEHICLES).forEach(k => {
+          const btn = document.getElementById(`carousel-btn-${k}`);
+          if (btn) {
+            if (k === key) {
+              btn.className = 'candy-btn flex-1 min-w-[50px] sm:min-w-[64px] p-1.5 sm:p-2 rounded-2xl flex flex-col items-center justify-center bg-gradient-to-t from-emerald-200 to-white border-2 border-emerald-500 scale-105 shadow-md';
+            } else {
+              btn.className = 'candy-btn flex-1 min-w-[50px] sm:min-w-[64px] p-1.5 sm:p-2 rounded-2xl flex flex-col items-center justify-center bg-white/80 border-2 border-transparent hover:border-slate-300';
+            }
+          }
+        });
+      }
+      handleImgFallback(imgEl, type) {
+        // SVG pengganti beranimasi comel jika CDN lambat atau disekat
+        const emojiMap = {
+          mascot: '🦦',
+          fireTruck: '🚒',
+          ambulance: '🚑',
+          policeCar: '🚓',
+          garbageTruck: '🚛',
+          mobileCrane: '🏗️',
+          tractor: '🚜',
+          deliveryTruck: '📦',
+          fireStation: '🚒',
+          hospital: '🏥',
+          construction: '🚧',
+          garbage: '♻️',
+          farm: '🌾',
+          depot: '🏢',
+          police: '👮',
+          car: '🚗',
+          prop: '⭐'
+        };
+        const em = emojiMap[type] || '🚗';
+        const svgUri = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><rect width="96" height="96" rx="24" fill="%23fef3c7"/><text x="48" y="58" font-size="44" text-anchor="middle">${em}</text></svg>`;
+        imgEl.onerror = null;
+        imgEl.src = svgUri;
+      }
+    }
+
+    // Variabel Global
+    let sound, kindyLang, profile, kindyApp, game, ui;
+
+    function initKindyTownApp() {
+      try {
+        sound = new SoundEngine();
+        kindyLang = new LanguageManager();
+        profile = new ProfileManager();
+        kindyApp = new KindyKlubApp();
+        game = new KindyTownGame();
+        ui = new UIManager();
+
+        // Pendedahan kepada Window secara global tanpa konflik nama bawaan HTML
+        window.sound = sound;
+        window.kindyLang = kindyLang;
+        window.lang = kindyLang; // fallback
+        window.profile = profile;
+        window.kindyApp = kindyApp;
+        window.game = game;
+        window.ui = ui;
+
+        // Buka sekatan audio pada interaksi sentuhan pertama
+        const unlockAudio = () => {
+          if (sound) sound.init();
+          window.removeEventListener('pointerdown', unlockAudio);
+          window.removeEventListener('touchstart', unlockAudio);
+        };
+        window.addEventListener('pointerdown', unlockAudio, { passive: true });
+        window.addEventListener('touchstart', unlockAudio, { passive: true });
+
+        // Tetapkan profil awal & bahasa
+        profile.updateUI();
+        kindyApp.selectAgeLevel(profile.data.ageLevel || 1);
+        kindyLang.set(profile.data.lang || 'BM');
+
+        game.init();
+        ui.init();
+
+        // Pemasangan Event Listener fizikal terus pada butang bahasa untuk mengelakkan isu klik inline
+        const btnBM = document.getElementById('lang-btn-bm');
+        const btnEN = document.getElementById('lang-btn-en');
+        if (btnBM) {
+          btnBM.addEventListener('click', (e) => {
+            e.preventDefault();
+            kindyApp.setLanguage('BM');
+          });
+        }
+        if (btnEN) {
+          btnEN.addEventListener('click', (e) => {
+            e.preventDefault();
+            kindyApp.setLanguage('EN');
+          });
+        }
+      } catch (err) {
+        console.warn('Inisialisasi Kindy Town (Graceful):', err);
+      }
+    }
+
+    // Jalankan dengan selamat tanpa mengira masa siap dokumen
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initKindyTownApp);
+    } else {
+      initKindyTownApp();
+    }
+  </script>
+</body>
+</html>
